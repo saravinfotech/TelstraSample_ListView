@@ -1,4 +1,4 @@
-package com.dynamiclist;
+package com.dynamiclist.ui;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -10,12 +10,13 @@ import android.view.WindowManager;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.dynamiclist.R;
 import com.dynamiclist.Utilities.Constants;
 import com.dynamiclist.Utilities.NetworkConnection;
 import com.dynamiclist.api.FactsAPI;
-import com.dynamiclist.dataAdapter.FactsArrayAdapter;
-import com.dynamiclist.pojo.Facts;
-import com.dynamiclist.pojo.Row;
+import com.dynamiclist.adapter.FactsArrayAdapter;
+import com.dynamiclist.model.Facts;
+import com.dynamiclist.model.Row;
 
 import java.util.List;
 
