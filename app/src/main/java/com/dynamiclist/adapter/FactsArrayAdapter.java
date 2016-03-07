@@ -1,7 +1,6 @@
 package com.dynamiclist.adapter;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,19 +39,13 @@ public class FactsArrayAdapter extends ArrayAdapter<Row> {
             row = inflater.inflate(R.layout.single_row, parent, false);
             factsViewHolder = new FactsViewHolder(row);
             row.setTag(factsViewHolder);
-            Log.d(TAG, "Row creation first time");
         }else{
             factsViewHolder = (FactsViewHolder) row.getTag();
-            Log.d(TAG, "Recycling Rows");
         }
 
         String stringTitle = factsList.get(position).getTitle();
         String stringDesc = factsList.get(position).getDescription();
         String stringImageURL = factsList.get(position).getImageHref();
-
-        Log.d(TAG, "Title is "+stringTitle);
-        Log.d(TAG, "Description is "+stringDesc);
-        Log.d(TAG, "Image URL is "+stringImageURL);
 
         if(stringTitle != null) {
             factsViewHolder.factsTitle.setText(stringTitle);

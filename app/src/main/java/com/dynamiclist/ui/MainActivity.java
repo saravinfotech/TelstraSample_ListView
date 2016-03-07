@@ -129,12 +129,10 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
     @Override
     public void onResponse(Response<Facts> response, Retrofit retrofit) {
         dismissProgressBar();
-        Log.d(TAG, "Response JSON is"+response.body().getRows().toString());
         if(swipeRefreshLayout.isRefreshing()){
             swipeRefreshLayout.setRefreshing(false);
         }
         FactsArrayAdapter myFactsArrayAdapter = new FactsArrayAdapter(MainActivity.this, response.body().getRows());
-        Log.i(TAG, "Title value is " + response.body().getTitle());
         getActionBar().setTitle(response.body().getTitle());
         listView.setAdapter(myFactsArrayAdapter);
     }
