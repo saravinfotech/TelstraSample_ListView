@@ -4,14 +4,14 @@ This app shows how ListView is implemented with Custom Array Adapter. This app u
 
 Implementation:
 
-ListView
-GSON Parsing
-Retrofit 2
-Swipe Refresh Layout
+    ListView
+    GSON Parsing
+    Retrofit 2
+    Swipe Refresh Layout
 
 
 Third Party Libraries:
 
-Retrofit
-GSON
-Picasso
+    Retrofit
+    GSON
+    Picasso
