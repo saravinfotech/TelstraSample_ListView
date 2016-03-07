@@ -94,6 +94,8 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
                 .build();
         FactsAPI factsAPI = retrofit.create(FactsAPI.class);
         Call<Facts> call = factsAPI.getFacts();
+
+        //Asynchronous call in retrofit library
         call.enqueue(this);
     }
 
