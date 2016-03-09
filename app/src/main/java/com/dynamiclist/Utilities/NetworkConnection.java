@@ -12,6 +12,7 @@ public class NetworkConnection {
     @SuppressWarnings("CanBeFinal")
     private Context mContext;
 
+    @SuppressWarnings("unused")
     public NetworkConnection(Context context){
         this.mContext = context;
     }

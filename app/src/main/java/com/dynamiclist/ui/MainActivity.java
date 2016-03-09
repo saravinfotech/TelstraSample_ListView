@@ -30,8 +30,10 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
 
 
     private ListView mListView;
+    @SuppressWarnings("CanBeFinal")
     private ProgressDialog mProgressBar = null;
     private SwipeRefreshLayout mSwipeRefreshLayout;
+    @SuppressWarnings("unused")
     private NetworkConnection mNetworkConnectivity;
 
     //private List<Facts> mFactsList;
@@ -42,20 +44,7 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        mNetworkConnectivity = new NetworkConnection(this);
-        mListView = (ListView)findViewById(R.id.listView);
-
-        if(mNetworkConnectivity.isConnectionAvailable()) {
-            mProgressBar = new ProgressDialog(MainActivity.this);
-            mProgressBar.setMessage(Constants.LOADING);
-            mProgressBar.show();
-            mProgressBar.setCancelable(false);
-            createViews();
-            processRequest();
-        }else{
-            Toast.makeText(MainActivity.this, Constants.NO_CONNECTION, Toast.LENGTH_LONG).show();
-        }
+        createViews();
     }
 
     @Override
@@ -68,7 +57,7 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
             mProgressBar.setMessage(Constants.LOADING);
             mProgressBar.show();
             mProgressBar.setCancelable(false);
-            createViews();
+      //      createViews();
             processRequest();
         }else{
             Toast.makeText(MainActivity.this, Constants.NO_CONNECTION, Toast.LENGTH_LONG).show();

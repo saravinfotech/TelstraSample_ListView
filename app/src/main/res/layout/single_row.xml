@@ -3,16 +3,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorActivityBackground"
     android:padding="8dp"
     tools:context=".ui.MainActivity"
-    tools:ignore="Overdraw">
+    >
 
     <TextView
         android:id = "@+id/titleText"
         android:layout_width="match_parent"
         android:singleLine="false"
         android:layout_toLeftOf="@+id/rightArrow"
+        android:layout_toStartOf="@+id/rightArrow"
         android:layout_gravity="fill"
         style="@style/title_style"
         android:layout_height="wrap_content"
@@ -24,7 +24,7 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
         android:layout_marginBottom="7dp"
-        tools:ignore="RtlHardcoded" />
+         />
 
     <ImageView
         android:id="@+id/imageView"
@@ -37,7 +37,9 @@
         android:layout_marginRight="5dp"
         android:layout_centerVertical="true"
         android:layout_toLeftOf="@+id/rightArrow"
-        tools:ignore="ContentDescription,RtlHardcoded" />
+        android:layout_toStartOf="@+id/rightArrow"
+        android:contentDescription="@string/list_image_description"
+        />
 
     <TextView
         android:id="@+id/descText"
@@ -49,14 +51,17 @@
         android:text="Small Text"
         android:layout_below="@+id/titleText"
         android:layout_toLeftOf="@+id/imageView"
+        android:layout_toStartOf="@+id/imageView"
         android:layout_marginBottom="7dp"
-        tools:ignore="RtlHardcoded" />
+        />
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
         android:id="@+id/rightArrow"
         android:src="@drawable/right_arrow"
-        tools:ignore="ContentDescription,RtlHardcoded" />
+        android:contentDescription="@string/list_image_moreInfo"
+        />
 </RelativeLayout>
