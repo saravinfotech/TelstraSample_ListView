@@ -9,7 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.dynamiclist.R;
-import com.dynamiclist.utilities.Constants;
+import com.dynamiclist.Utilities.Constants;
 import com.dynamiclist.model.Row;
 import com.squareup.picasso.Picasso;
 
