@@ -44,6 +44,8 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        mNetworkConnectivity = new NetworkConnection(this);
+        mProgressBar = new ProgressDialog(MainActivity.this);
         createViews();
     }
 
@@ -68,6 +70,7 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
      * Constructs the view elements
      */
     private void createViews(){
+
 
         mListView = (ListView) findViewById(R.id.listView);
 
@@ -115,11 +118,10 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
      */
     @Override
     public void onRefresh() {
+        dismissProgressBar();
         if (mNetworkConnectivity.isConnectionAvailable()) {
             processRequest();
-            dismissProgressBar();
         } else {
-            dismissProgressBar();
             Toast.makeText(MainActivity.this, Constants.NO_CONNECTION, Toast.LENGTH_LONG).show();
         }
     }

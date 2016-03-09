@@ -67,7 +67,7 @@ public class FactsArrayAdapter extends ArrayAdapter<Row> {
                     .load(stringImageURL)
                     .placeholder(R.drawable.image_placeholder)
                     .error(R.drawable.img_not_available)         // optional
-                   // .resize(200, 200)
+                    .resize(150, 150)
                     .into(factsViewHolder.factsImage);
         return row;
     }
