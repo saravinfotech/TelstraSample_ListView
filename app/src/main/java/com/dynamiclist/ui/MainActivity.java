@@ -2,7 +2,9 @@ package com.dynamiclist.ui;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.Window;
@@ -11,14 +13,11 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.dynamiclist.R;
-import com.dynamiclist.Utilities.Constants;
-import com.dynamiclist.Utilities.NetworkConnection;
-import com.dynamiclist.api.FactsAPI;
 import com.dynamiclist.adapter.FactsArrayAdapter;
+import com.dynamiclist.api.FactsAPI;
 import com.dynamiclist.model.Facts;
-import com.dynamiclist.model.Row;
-
-import java.util.List;
+import com.dynamiclist.utilities.Constants;
+import com.dynamiclist.utilities.NetworkConnection;
 
 import retrofit.Call;
 import retrofit.Callback;
@@ -30,13 +29,13 @@ import retrofit.Retrofit;
 public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefreshListener, Callback<Facts> {
 
 
-    private ListView listView;
+    private ListView mListView;
     private ProgressDialog mProgressBar = null;
-    private SwipeRefreshLayout swipeRefreshLayout;
-    NetworkConnection networkConnectivity;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
+    private NetworkConnection mNetworkConnectivity;
 
-    private List<Facts> factsList;
-    private List<Row>  rowItems;
+    //private List<Facts> mFactsList;
+    //private List<Row> mRowItems;
     private static final String TAG = MainActivity.class.getSimpleName();
 
     @Override
@@ -44,10 +43,10 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        networkConnectivity = new NetworkConnection(this);
-        listView = (ListView)findViewById(R.id.listView);
+        mNetworkConnectivity = new NetworkConnection(this);
+        mListView = (ListView)findViewById(R.id.listView);
 
-        if(networkConnectivity.isConnectionAvailable()) {
+        if(mNetworkConnectivity.isConnectionAvailable()) {
             mProgressBar = new ProgressDialog(MainActivity.this);
             mProgressBar.setMessage(Constants.LOADING);
             mProgressBar.show();
@@ -59,20 +58,40 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
         }
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(mNetworkConnectivity.isConnectionAvailable()) {
+            if(mProgressBar.isShowing()){
+                dismissProgressBar();
+            }
+            mProgressBar.setMessage(Constants.LOADING);
+            mProgressBar.show();
+            mProgressBar.setCancelable(false);
+            createViews();
+            processRequest();
+        }else{
+            Toast.makeText(MainActivity.this, Constants.NO_CONNECTION, Toast.LENGTH_LONG).show();
+        }
+    }
 
     /**
      * Constructs the view elements
      */
-    public void createViews(){
+    private void createViews(){
 
-        listView = (ListView) findViewById(R.id.listView);
+        mListView = (ListView) findViewById(R.id.listView);
 
         setupTitleBar();
-        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_layout);
-        swipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.colorAccent),
-                getResources().getColor(R.color.colorPrimary),
-                getResources().getColor(R.color.colorPrimaryDark));
-        swipeRefreshLayout.setOnRefreshListener(this);
+        mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_layout);
+        mSwipeRefreshLayout.setColorSchemeColors(ContextCompat.getColor(this, R.color.colorAccent),
+                        ContextCompat.getColor(this,R.color.colorPrimary),
+                        ContextCompat.getColor(this,R.color.colorPrimaryDark));
+        //Code removed due to Lint error of deprecated api
+                                //getResources().getColor(R.color.colorAccent),
+                                //getResources().getColor(R.color.colorPrimary),
+                                //getResources().getColor(R.color.colorPrimaryDark));
+                                mSwipeRefreshLayout.setOnRefreshListener(this);
     }
 
     /**
@@ -88,7 +107,7 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
      * This is the retrofit library initialization piece where the network call is made
      * return value is always a converted to type Facts POJO here
      */
-    public void processRequest(){
+    private void processRequest(){
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(Constants.BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
@@ -107,7 +126,7 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
      */
     @Override
     public void onRefresh() {
-        if (networkConnectivity.isConnectionAvailable()) {
+        if (mNetworkConnectivity.isConnectionAvailable()) {
             processRequest();
             dismissProgressBar();
         } else {
@@ -123,30 +142,32 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
      *
      * Get the response & pass the JSON to Facts POJO class which in turn
      * assigns the JSON Objects to the Row POJO class for further processing.
-     * @param response
-     * @param retrofit
+     * @param response response JSON received from Network Calls
+     * @param retrofit instance of Retrofit passed by default
      */
     @Override
     public void onResponse(Response<Facts> response, Retrofit retrofit) {
         dismissProgressBar();
-        if(swipeRefreshLayout.isRefreshing()){
-            swipeRefreshLayout.setRefreshing(false);
+        if(mSwipeRefreshLayout.isRefreshing()){
+            mSwipeRefreshLayout.setRefreshing(false);
         }
         FactsArrayAdapter myFactsArrayAdapter = new FactsArrayAdapter(MainActivity.this, response.body().getRows());
-        getActionBar().setTitle(response.body().getTitle());
-        listView.setAdapter(myFactsArrayAdapter);
+        if(response.body().getTitle() !=null && getActionBar()!= null) {
+            getActionBar().setTitle(response.body().getTitle());
+        }
+        mListView.setAdapter(myFactsArrayAdapter);
     }
 
     /**
      * OnFailure dismiss the progress bar if showing
-     * also dismiss the swipe to refress progress bar if showing.
-     * @param t
+     * also dismiss the swipe to refresh progress bar if showing.
+     * @param t Instance of Exception thrown to be handled.
      */
     @Override
     public void onFailure(Throwable t) {
         dismissProgressBar();
-        if(swipeRefreshLayout.isRefreshing()){
-            swipeRefreshLayout.setRefreshing(false);
+        if(mSwipeRefreshLayout.isRefreshing()){
+            mSwipeRefreshLayout.setRefreshing(false);
         }
         Toast.makeText(this, "Failed to establish connection"+t.getLocalizedMessage(),Toast.LENGTH_SHORT).show();
         Log.d(TAG, "Failed to create connection" + t.getLocalizedMessage());
@@ -155,13 +176,17 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
     /**
      * Small Utility to change the Actionbar & status bar color
      */
-    public void setupTitleBar(){
+    private void setupTitleBar(){
         Window window = this.getWindow();
         // clear FLAG_TRANSLUCENT_STATUS flag:
-        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        }
         // add FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS flag to the window
-        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-        // finally change the color
-        window.setStatusBarColor(this.getResources().getColor(R.color.actionBarColor));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            // finally change the color
+            window.setStatusBarColor(ContextCompat.getColor(this, R.color.actionBarColor));
+        }
     }
 }

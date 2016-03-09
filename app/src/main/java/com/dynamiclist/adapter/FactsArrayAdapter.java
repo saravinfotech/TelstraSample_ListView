@@ -9,21 +9,26 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.dynamiclist.R;
-import com.dynamiclist.Utilities.Constants;
+import com.dynamiclist.utilities.Constants;
 import com.dynamiclist.model.Row;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
 /**
+ * Adapter class to provide the dataSource to the ListView
  * Created by Saravanan on 3/7/2016.
  */
+
 public class FactsArrayAdapter extends ArrayAdapter<Row> {
 
+    @SuppressWarnings("CanBeFinal")
     private List<Row> factsList;
-    Context context;
+    @SuppressWarnings("CanBeFinal")
+    private Context context;
 
-    private static final String TAG = FactsArrayAdapter.class.getSimpleName();
+    //@SuppressWarnings("unused")
+    //private static final String TAG = FactsArrayAdapter.class.getSimpleName();
 
     public FactsArrayAdapter(Context context, List<Row> factsList){
         super(context, R.layout.single_row,factsList);
@@ -33,6 +38,7 @@ public class FactsArrayAdapter extends ArrayAdapter<Row> {
 
     public View getView(int position, View convertView, ViewGroup parent){
         View row = convertView;
+        @SuppressWarnings("UnusedAssignment")
         FactsViewHolder factsViewHolder = null;
         if(row == null){
             LayoutInflater inflater = LayoutInflater.from(context);
@@ -69,6 +75,7 @@ public class FactsArrayAdapter extends ArrayAdapter<Row> {
     /**
      * View holder class for initializing the row elements
      */
+    @SuppressWarnings("CanBeFinal")
     class FactsViewHolder{
         ImageView factsImage;
         TextView factsTitle;

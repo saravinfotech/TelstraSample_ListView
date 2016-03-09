@@ -1,6 +1,8 @@
 package com.dynamiclist.model;
 
 /**
+ * POJO Class for the response to be stored and retrieved while
+ * processing the request
  * Created by Saravanan on 3/7/2016.
  */
 /**
@@ -14,10 +16,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 
+@SuppressWarnings("unused")
 public class Facts {
     @SerializedName("title")
     @Expose
     private String title;
+    @SuppressWarnings("Convert2Diamond")
     @SerializedName("rows")
     @Expose
     private List<Row> rows = new ArrayList<Row>();
