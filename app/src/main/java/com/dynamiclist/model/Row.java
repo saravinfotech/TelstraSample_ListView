@@ -45,4 +45,12 @@ public class Row {
         this.imageHref = imageHref;
     }
 
- }
+    @Override
+    public String toString() {
+        return "Row{" +
+                "title='" + title + '\'' +
+                ", description='" + description + '\'' +
+                ", imageHref='" + imageHref + '\'' +
+                '}';
+    }
+}

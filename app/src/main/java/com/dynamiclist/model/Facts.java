@@ -42,4 +42,11 @@ public class Facts {
         this.rows = rows;
     }
 
+    @Override
+    public String toString() {
+        return "Facts{" +
+                "title='" + title + '\'' +
+                ", rows=" + rows +
+                '}';
+    }
 }

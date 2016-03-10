@@ -6,18 +6,19 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.ListView;
 import android.widget.Toast;
 
 import com.dynamiclist.R;
+import com.dynamiclist.Utilities.Constants;
+import com.dynamiclist.Utilities.NetworkConnection;
 import com.dynamiclist.adapter.FactsArrayAdapter;
 import com.dynamiclist.api.FactsAPI;
 import com.dynamiclist.model.Facts;
-import com.dynamiclist.Utilities.Constants;
-import com.dynamiclist.Utilities.NetworkConnection;
 
 import retrofit.Call;
 import retrofit.Callback;
@@ -29,36 +30,34 @@ import retrofit.Retrofit;
 public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefreshListener, Callback<Facts> {
 
 
-    private ListView mListView;
+    private RecyclerView recyclerView;
     @SuppressWarnings("CanBeFinal")
-    private ProgressDialog mProgressBar = null;
-    private SwipeRefreshLayout mSwipeRefreshLayout;
+    private ProgressDialog progressBar = null;
+    private SwipeRefreshLayout swipeRefreshLayout;
     @SuppressWarnings("unused")
-    private NetworkConnection mNetworkConnectivity;
+    private NetworkConnection networkConnectivity;
 
-    //private List<Facts> mFactsList;
-    //private List<Row> mRowItems;
+    //private List<Facts> factsList;
+    //private List<Row> rowItems;
     private static final String TAG = MainActivity.class.getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        mNetworkConnectivity = new NetworkConnection(this);
-        mProgressBar = new ProgressDialog(MainActivity.this);
+        networkConnectivity = new NetworkConnection(this);
+        progressBar = new ProgressDialog(MainActivity.this);
         createViews();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        if(mNetworkConnectivity.isConnectionAvailable()) {
-            if(mProgressBar.isShowing()){
-                dismissProgressBar();
-            }
-            mProgressBar.setMessage(Constants.LOADING);
-            mProgressBar.show();
-            mProgressBar.setCancelable(false);
+        if(networkConnectivity.isConnectionAvailable()) {
+            dismissProgressBar();
+            progressBar.setMessage(Constants.LOADING);
+            progressBar.show();
+            progressBar.setCancelable(false);
       //      createViews();
             processRequest();
         }else{
@@ -71,27 +70,32 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
      */
     private void createViews(){
 
-
-        mListView = (ListView) findViewById(R.id.listView);
-
         setupTitleBar();
-        mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_layout);
-        mSwipeRefreshLayout.setColorSchemeColors(ContextCompat.getColor(this, R.color.colorAccent),
-                        ContextCompat.getColor(this,R.color.colorPrimary),
-                        ContextCompat.getColor(this,R.color.colorPrimaryDark));
+        recyclerView = (RecyclerView)findViewById(R.id.recyclerView);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_layout);
+        swipeRefreshLayout.setColorSchemeColors(ContextCompat.getColor(this, R.color.colorAccent),
+                ContextCompat.getColor(this, R.color.colorPrimary),
+                ContextCompat.getColor(this, R.color.colorPrimaryDark));
         //Code removed due to Lint error of deprecated api
                                 //getResources().getColor(R.color.colorAccent),
                                 //getResources().getColor(R.color.colorPrimary),
                                 //getResources().getColor(R.color.colorPrimaryDark));
-                                mSwipeRefreshLayout.setOnRefreshListener(this);
+                                swipeRefreshLayout.setOnRefreshListener(this);
     }
 
     /**
      * Utility to dismiss the progress bar
      */
     private void dismissProgressBar() {
-        if(mProgressBar.isShowing()){
-            mProgressBar.dismiss();
+        if(progressBar.isShowing()){
+            progressBar.dismiss();
+        }
+    }
+
+    private void dismissSwipetoRefresh(){
+        if(swipeRefreshLayout.isRefreshing()){
+            swipeRefreshLayout.setRefreshing(false);
         }
     }
 
@@ -119,12 +123,14 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
     @Override
     public void onRefresh() {
         dismissProgressBar();
-        if (mNetworkConnectivity.isConnectionAvailable()) {
+        if (networkConnectivity.isConnectionAvailable()) {
             processRequest();
         } else {
+            swipeRefreshLayout.setRefreshing(false);
             Toast.makeText(MainActivity.this, Constants.NO_CONNECTION, Toast.LENGTH_LONG).show();
         }
     }
+
 
     /**
      * Retrofit Callback methods
@@ -139,15 +145,13 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
     @Override
     public void onResponse(Response<Facts> response, Retrofit retrofit) {
         dismissProgressBar();
-        if(mSwipeRefreshLayout.isRefreshing()){
-            mSwipeRefreshLayout.setRefreshing(false);
-        }
+        dismissSwipetoRefresh();
         FactsArrayAdapter myFactsArrayAdapter = new FactsArrayAdapter(MainActivity.this, response.body().getRows());
+        //myFactsArrayAdapter.notifyDataSetChanged();
         if(response.body().getTitle() !=null && getActionBar()!= null) {
             getActionBar().setTitle(response.body().getTitle());
         }
-        mListView.setAdapter(myFactsArrayAdapter);
-    }
+        recyclerView.setAdapter(myFactsArrayAdapter);}
 
     /**
      * OnFailure dismiss the progress bar if showing
@@ -157,9 +161,7 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
     @Override
     public void onFailure(Throwable t) {
         dismissProgressBar();
-        if(mSwipeRefreshLayout.isRefreshing()){
-            mSwipeRefreshLayout.setRefreshing(false);
-        }
+        dismissSwipetoRefresh();
         Toast.makeText(this, "Failed to establish connection"+t.getLocalizedMessage(),Toast.LENGTH_SHORT).show();
         Log.d(TAG, "Failed to create connection" + t.getLocalizedMessage());
     }
