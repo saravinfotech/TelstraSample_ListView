@@ -14,8 +14,8 @@ import android.view.WindowManager;
 import android.widget.Toast;
 
 import com.dynamiclist.R;
-import com.dynamiclist.Utilities.Constants;
-import com.dynamiclist.Utilities.NetworkConnection;
+import com.dynamiclist.utilities.Constants;
+import com.dynamiclist.utilities.NetworkConnection;
 import com.dynamiclist.adapter.FactsArrayAdapter;
 import com.dynamiclist.api.FactsAPI;
 import com.dynamiclist.model.Facts;
