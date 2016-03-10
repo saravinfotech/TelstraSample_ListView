@@ -93,6 +93,9 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
         }
     }
 
+    /**
+     * Utility to dismiss the swipetoRefresh Utility
+     */
     private void dismissSwipetoRefresh(){
         if(swipeRefreshLayout.isRefreshing()){
             swipeRefreshLayout.setRefreshing(false);
